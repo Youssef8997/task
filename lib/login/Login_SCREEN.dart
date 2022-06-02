@@ -1,3 +1,4 @@
+import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:task/componadas/TextFormFeldComponads.dart';
@@ -13,6 +14,7 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   var _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
+  bool isnormal = true;
   var EmailController = TextEditingController();
 
   var passController = TextEditingController();
@@ -37,23 +39,38 @@ class _LoginState extends State<Login> {
                   color: Colors.white),
             )),
       ),
-      body: Container(
-        height: Size.height,
-        width: Size.width,
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("Asset/hq720_live.jpg"),
-            fit: BoxFit.fill,
+      body: ConditionalBuilder(
+        builder:(context)=> Container(
+          height: Size.height,
+          width: Size.width,
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("Asset/hq720_live.jpg"),
+              fit: BoxFit.fill,
+            ),
           ),
+          child: Center(
+              child: MyContainer(
+            Height: Size.height * .8,
+            Width: Size.width * .8,
+            Child: LoginForm(Size),
+            context: context,
+          )),
         ),
-        child: Center(
-            child: MyContainer(
-          Height: Size.height * .8,
-          Width: Size.width * .8,
-          Child: LoginForm(Size),
-          context: context,
-        )),
+        fallback:(context)=>Container(
+    height: Size.height,
+    width: Size.width,
+    decoration: const BoxDecoration(
+    image: DecorationImage(
+    image: AssetImage("Asset/hq720_live.jpg"),
+    fit: BoxFit.fill,
+    ),
+    ),
+    child:const Center(child: Text("Sorry you are not have access to use app in this time",style: TextStyle(color: Colors.white,fontSize: 30,fontWeight: FontWeight.w900),)) ,
+
       ),
+        condition: DateTime.now().isBefore(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day,20,0,0)),
+    )
     );
   }
 
@@ -63,7 +80,10 @@ class _LoginState extends State<Login> {
       opacity: _isLoading ? 0 : 1,
       duration: const Duration(milliseconds: 600),
       onEnd: () {
-        Nevigator(boolen: false, page: LoadingPage(), context: context);
+        Nevigator(
+            boolen: false,
+            page: LoadingPage(isNormal: isnormal),
+            context: context);
       },
       child: Container(
         decoration: BoxDecoration(
@@ -175,13 +195,23 @@ class _LoginState extends State<Login> {
                         setState(() {
                           _isLoading = true;
                         });
-                      }else{
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-
-                          backgroundColor: Colors.red,
-                          content: Text("Email or Password is Wrong"),
-                          duration:  Duration(seconds: 2),
-                        ));
+                      } else {
+                        if (_formKey.currentState!.validate()) {
+                          if (EmailController.text == "youssef@gmail.com" &&
+                              passController.text == "123") {
+                            setState(() {
+                              isnormal = false;
+                              _isLoading = true;
+                            });
+                          } else {
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(const SnackBar(
+                              backgroundColor: Colors.red,
+                              content: Text("Email or Password is Wrong"),
+                              duration: Duration(seconds: 2),
+                            ));
+                          }
+                        }
                       }
                     }
                   },
