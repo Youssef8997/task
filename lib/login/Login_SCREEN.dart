@@ -21,6 +21,8 @@ class _LoginState extends State<Login> {
   bool isobs = true;
   @override
   Widget build(BuildContext context) {
+    print(DateTime.now());
+    print(DateTime.now().isBefore(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day,0,0,0)));
     var Size = MediaQuery.of(context).size;
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -69,11 +71,10 @@ class _LoginState extends State<Login> {
     child:const Center(child: Text("Sorry you are not have access to use app in this time",style: TextStyle(color: Colors.white,fontSize: 30,fontWeight: FontWeight.w900),)) ,
 
       ),
-        condition: DateTime.now().isBefore(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day,20,0,0)),
+        condition: DateTime.now().isAfter(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day,12,0,0))&&!DateTime.now().isBefore(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day,0,0,0)),
     )
     );
   }
-
   Widget MyContainer(
       {required Height, required Width, Widget? Child, context}) {
     return AnimatedOpacity(
@@ -99,7 +100,6 @@ class _LoginState extends State<Login> {
       ),
     );
   }
-
   Widget LoginForm(Size Size) {
     return Row(
       children: [
